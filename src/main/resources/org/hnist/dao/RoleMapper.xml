@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- org.hnist.dao.RoleMapper对应的接口 -->
+<mapper namespace="org.hnist.dao.RoleMapper">
+
+
+
+
+    <select id="findAll"  resultType="Role" >
+        select * from role
+    </select>
+
+    <!-- 插入 修改 删除 默认返回整数 即1 代表成功 0代表失败 所以不用设置返回参数resultType -->
+    <insert id="saveDao" parameterType="Role">
+        insert into role set rolename=#{rolename},roledes=#{roledes},remail=#{remail}
+    </insert>
+
+    <delete id="removeById" parameterType="Integer" >
+        delete from role where id=#{roleId}
+    </delete>
+
+    <select id="updateRoleById" resultType="Role">
+        select * from role where id=#{rid}
+    </select>
+
+    <update id="update" parameterType="Role" >
+        update role set rolename=#{rname},remail=#{remail},roledes=#{rdes} where id=#{id}
+    </update>
+
+
+</mapper>

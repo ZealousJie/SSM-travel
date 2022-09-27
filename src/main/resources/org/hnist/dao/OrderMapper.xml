@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 映射文件dtd约束头 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 命名空间 与下面语句的id一起组成查询的标识 -->
+<mapper namespace="org.hnist.dao.OrderMapper">
+    <resultMap id="orderAll" type="Order">
+        <id column="id" property="id"/>
+        <result column="uphone" property="oPhone"/>
+        <result column="tname" property="travel.tname"/>
+        <result column="uname" property="user.name"/>
+        <result column="tdescription" property="travel.tdescription"/>
+        <result column="province" property="travel.province"/>
+        <result column="email" property="user.email"/>
+        <result column="rid" property="user.rid"/>
+    </resultMap>
+    <resultMap id="all" type="Order">
+        <id column="id" property="id"/>
+        <result column="tdescription" property="travel.tdescription"/>
+        <result column="province" property="travel.province"/>
+        <result column="ttitle" property="travel.ttitle"/>
+        <result column="tpic" property="travel.tpic"/>
+
+    </resultMap>
+
+
+    <select id="findDesc" resultMap="orderAll">
+        select *,u.phone uphone,u.name uname from orderlist o,travel t,user u where o.travelId=t.travelId and o.uid=u.id
+        and o.id=#{id}
+    </select>
+
+    <select id="findOne" resultType="Order">
+        select * from orderlist where id=#{id}
+    </select>
+
+    <select id="findAll" resultType="Order">
+        select * from orderlist
+    </select>
+
+    <update id="updateDesc" parameterType="Order">
+        update orderlist set odate=#{odate},ttime=#{ttime},pnum=#{pnum},name=#{name},price=#{price} where id=#{id}
+    </update>
+
+    <update id="updateDescTravel">
+        update travel set tdescription=#{travel.tdescription},tname=#{travel.tname} where travelId=#{id}
+    </update>
+
+    <select id="find" resultMap="all">
+        SELECT * ,COUNT(DISTINCT `name`) FROM orderlist o,travel t where o.travelId=t.travelId GROUP BY `name` ORDER BY id DESC
+    </select>
+
+    <select id="selHotOrder" resultType="Hot">
+        SELECT COUNT(*) AS num,`name`,price,id FROM `orderlist`GROUP BY `name` ORDER BY COUNT(*) DESC LIMIT 0,5
+    </select>
+
+    <insert id="buy" parameterType="Order">
+        insert into orderlist set travelId=#{travelId},price=#{price},pnum=#{pnum},uid=#{uid},odate=NOW(),ttime=#{ttime},`name`=#{name},`type`=#{type}
+    </insert>
+
+    <select id="selUserOrder" resultType="Order">
+        select * from  orderlist where uid=#{id}
+    </select>
+</mapper>
