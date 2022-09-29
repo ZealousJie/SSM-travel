@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!--标准日志工厂-->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!--开启二级全局缓存 mapper里设置二级缓存-->
+<!--        <setting name="cacheEnabled" value="true"/>-->
+    </settings>
+    <typeAliases>
+        <!--设置了一个别名-->
+        <typeAlias alias="User" type="org.hnist.model.User"/>
+        <typeAlias alias="Role" type="org.hnist.model.Role"/>
+        <typeAlias alias="Order" type="org.hnist.model.Order"/>
+        <typeAlias alias="Travel" type="org.hnist.model.Travel"/>
+        <typeAlias alias="Dorder" type="org.hnist.model.Dorder"/>
+        <typeAlias alias="Hot" type="org.hnist.model.Hot"/>
+        <typeAlias alias="Scen" type="org.hnist.model.Scen"/>
+    </typeAliases>
+    <!-- 加载映射文件 -->
+    <mappers>
+        <mapper resource="org/hnist/dao/UserMapper.xml" />
+        <mapper resource="org/hnist/dao/RoleMapper.xml" />
+        <mapper resource="org/hnist/dao/OrderMapper.xml" />
+        <mapper resource="org/hnist/dao/IndexMapper.xml" />
+    </mappers>
+</configuration>

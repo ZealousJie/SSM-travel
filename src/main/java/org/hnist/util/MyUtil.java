@@ -1,6 +1,7 @@
 package org.hnist.util;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,14 +14,16 @@ public class MyUtil {
     public static String upload(HttpServletRequest request, MultipartFile myfile) throws IOException {
         String upic = null;
         if(myfile!=null && ! myfile.isEmpty()){
+            //重构文件名 而不是用文件原始名
             String name = UUID.randomUUID().toString().replaceAll("-","");
             String ext = FilenameUtils.getExtension(myfile.getOriginalFilename());
-            String url = request.getSession().getServletContext().getRealPath("/upload");
+            String url = request.getSession().getServletContext().getRealPath("/upload");//上传路径
             System.out.println(url + "/" + name + "." + ext);
             File file = new File(url);
             if(!file.exists()){
                 file.mkdirs();
             }
+
             myfile.transferTo(new File(url + "/" + name + "." + ext));
             upic = "upload/"+name+"."+ext;
         }

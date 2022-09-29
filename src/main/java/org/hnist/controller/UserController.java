@@ -1,16 +1,17 @@
 package org.hnist.controller;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.alibaba.excel.EasyExcel;
 import org.apache.ibatis.annotations.Param;
+import org.apache.poi.util.IOUtils;
 import org.hnist.listener.UserListener;
 import org.hnist.model.User;
 
@@ -62,9 +63,9 @@ public class UserController {
         userService.getOrderAll();
         return "redirect:/index.html";
     }
+    //文件上传
     @RequestMapping(value = "/jsp/userAdd",method = RequestMethod.POST)
-    public String addUser(User user, MultipartFile myfile,HttpSession session,HttpServletRequest request){
-        System.out.println(user.toString());
+    public String addUser(User user, MultipartFile myfile,HttpServletRequest request){
         String upic;
         try {
             upic= MyUtil.upload(request,myfile);
@@ -120,15 +121,36 @@ public class UserController {
     }
 
 
+
+    //excel文件导入
     @PostMapping("/upload")
     @ResponseBody
     public String upload(MultipartFile file) throws IOException {
 
         return userService.upload(file);
     }
+    //excel文件导出
     @GetMapping("/export1")
     @ResponseBody
     public void export(HttpServletResponse response) throws Exception{
         userService.export(response);
+    }
+
+    //文件下载
+    @PostMapping("/user/download")
+    public String download(String filename,HttpServletRequest request,HttpServletResponse response) throws IOException {
+
+        String url = request.getSession().getServletContext().getRealPath("upload");//下载路径
+        String[] split = filename.split("/");
+        String name = split[1];
+        System.out.println(name);
+        FileInputStream fileInputStream = new FileInputStream(new File(url, name));
+        response.setHeader("content-disposition","attachment;filename="+ URLEncoder.encode(name,"UTF-8"));//以附件形式下载
+        ServletOutputStream outputStream = response.getOutputStream();
+        System.out.println("文件正在下载");
+        IOUtils.copy(fileInputStream,outputStream);
+        IOUtils.closeQuietly(fileInputStream);
+        IOUtils.closeQuietly(outputStream);
+        return  null; //不设置返回值 代表响应只用来下载文件
     }
 }

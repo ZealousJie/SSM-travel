@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 映射文件dtd约束头 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 命名空间 与下面语句的id一起组成查询的标识 -->
+<mapper namespace="org.hnist.dao.UserMapper">
+
+<!--    <cache/>-->
+    <!--一对多的 一个用户对应多个订单-->
+    <resultMap id="userOrderMap" type="user">
+        <id column="uid" property="id"/>
+        <result column="email" property="email"/>
+        <result column="password" property="password"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <!--配置订单集合信息
+        property:集合名称
+        ofType:当前集合的数据类型
+        -->
+        <collection property="orderList" ofType="org.hnist.model.Order">
+            <!--封装Order的数据-->
+            <id column="id" property="id"/>
+            <result column="oPhone" property="oPhone"/>
+            <result column="price" property="price"/>
+            <result column="pnum" property="pnum"/>
+            <result column="odate" property="odate"/>
+            <result column="ttime" property="ttime"/>
+        </collection>
+    </resultMap>
+
+    <!--一对一的 一个用户对应一个角色-->
+    <resultMap id="userMap" type="org.hnist.model.User">
+        <!--手动指定字段与实体属性的映射关系-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="upic" jdbcType="VARCHAR" property="upic"/>
+<!--        <result column="rid" jdbcType="INTEGER" property="role.id"/>-->
+<!--        <result column="rolename" jdbcType="VARCHAR" property="role.rolename"/>-->
+<!--        <result column="roledes" jdbcType="VARCHAR" property="role.roledes"/>-->
+<!--        <result column="remail" jdbcType="VARCHAR" property="role.remail"/>-->
+        <!-- association(匹配) 的 property 对应model里的属性名-->
+<!--        嵌套查询 子查询<association property="role" javaType="Role" column="rid" select="查询语句的id"/>-->
+        <association property="role" javaType="Role">
+            <id column="rid" property="id"/>
+            <result column="rolename" property="rolename"/>
+            <result column="roledes" property="roledes"/>
+            <result column="remail" property="remail"/>
+        </association>
+    </resultMap>
+
+    <!--useCache="true/false"-->
+    <select id="selectUser" parameterType="String" resultType="User" >
+        select * from user where email=#{email} and password=#{password}
+    </select>
+
+    <select id="selectEmail" parameterType="String" resultType="User" >
+        select * from user where email=#{email}
+    </select>
+
+    <insert id="insertUser"  parameterType="User">
+        insert into user set email=#{email},password=#{password},`name`=#{name}
+    </insert>
+
+    <select id="getUser" resultMap="userMap" >
+        select * from user u,role r where u.rid=r.id order by u.id asc
+    </select>
+
+    <select id="getUser1" resultType="User" >
+        select * from user
+    </select>
+
+    <select id="getUserAndOrder" resultMap="userOrderMap" >
+        select *,o.id oid from user u,orderlist o where u.id=o.uid
+    </select>
+
+    <select id="selectRole" resultType="Integer">
+        select rid from user where email=#{email}
+    </select>
+
+    <insert id="addUser" parameterType="User">
+        insert into user set email=#{email},password=#{password},`name`=#{name},phone=#{phone},rid=#{rid},upic=#{upic}
+    </insert>
+
+    <delete id="delUser" parameterType="Integer">
+        delete from user where id = #{id}
+    </delete>
+
+    <select id="upUser1" resultType="User">
+        select * from user where id = #{id}
+    </select>
+
+    <update id="upUser2" parameterType="User">
+        update user set email=#{email},password=#{password},`name`=#{name},phone=#{phone},rid=#{rid},upic=#{upic} where id=#{id}
+    </update>
+    <!--excel-->
+    <insert id="read" parameterType="User">
+        insert into user (email,password,`name`,phone,rid,upic)values (#{email},#{password},#{name},#{phone},#{rid},#{upic})
+    </insert>
+
+
+
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- org.hnist.dao.RoleMapper对应的接口 -->
+<mapper namespace="org.hnist.dao.IndexMapper">
+
+    <resultMap id="discountMap" type="Dorder">
+        <id column="did" property="did"/>
+        <result column="oid" property="oid"/>
+        <result column="dprice" property="dprice"/>
+        <result column="dpic"  property="dpic"/>
+        <association property="order" javaType="Order">
+            <id column="id" property="id"/>
+            <result column="price" property="price"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+    <resultMap id="ScenMap" type="Order">
+        <id column="id" property="id"/>
+        <collection property="scenlist" ofType="Scen">
+            <id column="sid" property="sid"/>
+            <id column="tid" property="tid"/>
+            <result column="sname" property="sname"/>
+            <result column="spic" property="spic"/>
+        </collection>
+    </resultMap>
+    <resultMap id="detail" type="Order">
+        <id column="id" property="id"/>
+        <result column="tdescription" property="travel.tdescription"/>
+        <result column="province" property="travel.province"/>
+        <result column="ttitle" property="travel.ttitle"/>
+        <result column="tpic" property="travel.tpic"/>
+
+    </resultMap>
+    
+
+
+    <select id="selDiscount" resultMap="discountMap">
+        select * from dorder d,orderlist o where d.oid=o.id
+    </select>
+    
+    <select id="selHot" resultType="Scen">
+        select * from scen
+    </select>
+
+    <select id="selOrders" resultMap="detail">
+        select * from travel t,orderlist o where t.travelId=o.travelId and o.id=#{oid}
+    </select>
+
+    <select id="selPic" resultMap="ScenMap">
+        select * from scen s,orderlist o where s.tid=o.travelId and o.id=#{oid}
+    </select>
+
+    <select id="selFlag" resultType="String">
+        select `name` from dorder d,orderlist o where d.oid=o.id
+    </select>
+</mapper>
